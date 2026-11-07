@@ -19,8 +19,8 @@
 
 ## 当前状态（2026-11-07）
 
-- 工作区为空，项目尚未初始化（无 Cargo.toml）。GUI/渲染技术栈（winit + wgpu/egui、tauri 等）尚未选型——修改前先确认当前实际结构，再更新本文件。
-- 尚未初始化 git。
+- 项目尚未写代码（无 Cargo.toml）。GUI/渲染技术栈（winit + wgpu/egui、tauri 等）尚未选型——修改前先确认当前实际结构，再更新本文件。
+- git 已初始化，远程仓库 https://github.com/Haaaatcher/RustPing（origin，main 分支）。
 
 ## 环境与约定
 
