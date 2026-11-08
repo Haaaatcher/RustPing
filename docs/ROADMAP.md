@@ -14,6 +14,39 @@
 | 配置 | serde + toml + notify | TOML 配置 + 文件变更热重载 |
 | 日志 | tracing | 关键路径耗时打点（钩子→首帧延迟等） |
 
+### 选型简介与文档
+
+**GUI / 渲染层**
+
+- **[egui](https://github.com/emilk/egui)**（[官网](https://www.egui.rs/) / [文档](https://docs.rs/egui)）
+  纯 Rust 的即时模式（immediate mode）GUI 库：每帧用普通 Rust 代码描述整个 UI，无需手动同步控件状态。自带布局、字体与常用控件；`Shape`/`Mesh` 图元可画任意三角形，本项目的扇形轮盘、圆环动画、设置窗口都用它绘制。
+- **[wgpu](https://wgpu.rs/)**（[文档](https://docs.rs/wgpu)）
+  Rust 对 WebGPU 标准的跨平台实现，底层映射到 Vulkan / Metal / DirectX 12。GPU 加速渲染的入口，egui 的 wgpu 渲染后端由它驱动。
+- **[eframe](https://github.com/emilk/egui)**（[文档](https://docs.rs/eframe)）
+  egui 官方的桌面应用框架，把 winit（窗口 + 事件循环）和 wgpu（渲染后端）打包成一个 `run_native` 入口。本项目直接以它为应用骨架。
+- **[winit](https://github.com/rust-windowing/winit)**（[文档](https://docs.rs/winit)）
+  跨平台窗口创建与输入事件循环库，负责透明窗口、置顶、多显示器枚举、DPI 缩放等；是 egui / wgpu 生态共用的事件基础。
+- **[raw-window-handle](https://github.com/rust-windowing/raw-window-handle)**（[文档](https://docs.rs/raw-window-handle)）
+  从 winit 窗口取出平台原生句柄（Windows 上即 HWND）的互操作层。设置 click-through 等扩展窗口样式时，需要拿 HWND 去调 Win32 API。
+
+**平台层（Windows）**
+
+- **[windows-rs](https://github.com/microsoft/windows-rs)**（[文档](https://microsoft.github.io/windows-docs-rs/)）
+  微软官方维护的 Windows API Rust 绑定，覆盖 Win32 与 COM。输入钩子（`SetWindowsHookExW`）、窗口扩展样式（`SetWindowLongPtrW`）、注册表开机自启等系统层调用全靠它。
+- **[tray-icon](https://github.com/tauri-apps/tray-icon)**（[文档](https://docs.rs/tray-icon)）
+  系统托盘图标与右键菜单库（tauri-apps 出品，纯 Rust、无 WebView 依赖）。用于托盘菜单「设置 / 暂停 / 退出」。
+
+**配置与可观测性**
+
+- **[serde](https://serde.rs/)**（[文档](https://docs.rs/serde)）
+  Rust 事实标准的序列化框架，结构体加 derive 宏即可与各种格式互转。配置文件读写的核心。
+- **[toml](https://github.com/toml-rs/toml)**（[文档](https://docs.rs/toml)）
+  TOML 格式的解析/生成库，serde 兼容。本项目配置选 TOML 是因为手写友好、支持注释。
+- **[notify](https://github.com/notify-rs/notify)**（[文档](https://docs.rs/notify)）
+  跨平台文件系统变更监听（封装各 OS 原生 API）。实现 `config.toml` 保存后免重启热重载。
+- **[tracing](https://github.com/tokio-rs/tracing)**（[文档](https://docs.rs/tracing)）
+  tokio 团队的结构化日志与追踪库，支持 span 层级与耗时打点。用于验证"热键按下→轮盘可见 <50ms"这类性能指标。
+
 ## 总体顺序
 
 **先啃最高风险的平台层，尽快打通核心闭环，配置与打磨靠后：**
