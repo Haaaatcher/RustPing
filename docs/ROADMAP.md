@@ -155,7 +155,8 @@ macOS 支持（platform trait 已预留）、自定义图片表情、音效、�
 
 ```
 src/
-  main.rs        — 启动、线程编排（钩子线程 + winit 事件循环）
+  lib.rs         — 库入口：pub mod 汇总（bin 经由 lib 引用，pub 项不触发 dead_code）
+  main.rs        — 启动、线程编排（tracing 初始化 + 钩子线程 + winit 事件循环）
   app.rs         — 全局状态编排
   gesture.rs     — 手势状态机（纯逻辑，可单测）
   wheel.rs       — 轮盘几何与命中测试（纯逻辑，可单测）
