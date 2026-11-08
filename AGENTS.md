@@ -17,6 +17,7 @@
 - 窗口：winit（eframe 内置），click-through 等扩展样式经 raw-window-handle 调 Win32。
 - 平台策略：**Windows 优先**；平台相关代码（输入钩子/覆盖层/托盘）收敛在 `src/platform/` 并抽 trait，macOS 作为后续独立阶段。
 - 开发顺序：见 [docs/ROADMAP.md](docs/ROADMAP.md)（M0 骨架 → M1 平台层 → M2 核心闭环 → M3 可配置 → M4 发布）。
+- 开发流程与调试：见 [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md)。要点——每阶段节奏为"纯逻辑+单测先行 → 平台 Spike（examples）→ 集成 → 冒烟清单"；调试主通道是日志+HUD（窗口看不见、点不着）；**红线：LL 钩子回调内禁止断点与慢逻辑（超时会被系统静默摘钩），回调只入队事件**；debug 构建有急停热键（钩子线程处理）与心跳看门狗，防止全局吞输入把开发机锁死。
 
 ### lolPing 实现要点（参考）
 
