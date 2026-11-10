@@ -7,6 +7,7 @@
 pub mod app;
 pub mod config;
 pub mod gesture;
+pub mod logging;
 pub mod marker;
 pub mod platform;
 pub mod render;

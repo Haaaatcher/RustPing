@@ -57,11 +57,14 @@
 - **钩子可能被系统摘除**（回调超时、会话切换/RDP 等），因此：心跳计数进 HUD；心跳停止增长 → 自动重装钩子。可观测性与健壮性用同一套机制。
 - 验证窗口样式用 **Spy++**（VS 自带）：确认 `WS_EX_TRANSPARENT | WS_EX_LAYERED | WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE` 实际生效，不靠猜。
 
-## 6. 日志与事后分析
+## 6. 日志与事后分析（实现：`src/logging.rs`）
 
-- tracing 双层输出：console（pretty）+ 滚动文件（tracing-appender），目录 `%LOCALAPPDATA%\RustPing\logs`。
-- 自定义 panic hook：panic 信息 + backtrace 写文件后再退出，崩溃可事后分析。
-- 关键 span：`hook_event`（回调入口）、`gesture_transition`、`paint`。
+- **双通道**：console（`RUST_LOG` 控制，默认 `info`，带颜色）+ 按天滚动文件（`%LOCALAPPDATA%\RustPing\logs\rustping.log.YYYY-MM-DD`，无颜色）。
+- **文件级别独立可调**：`RUSTPING_FILE_LOG=debug` 只放大文件通道（调试时安静看文件、console 不刷屏）。
+- **崩溃日志同步落盘**：panic 时同步写 `crash-<UTC时间>.log`（不经异步管道，强杀/双重 panic 也不丢），含版本、线程、panic 信息与完整 backtrace；同时仍进双通道。自测入口：`RUSTPING_SELFTEST_PANIC=1 cargo run` → 退出码 101 + 生成 crash 文件。
+- **保留期**：启动时按 mtime 清理——普通日志 14 天、崩溃日志 90 天（崩溃日志留得更久，供事后分析）。
+- **退出刷盘**：`LogGuard` 持有到 main 结束，drop 时刷新异步 writer。
+- 关键 span（阶段 2+ 随功能加入）：`hook_event`（回调入口）、`gesture_transition`、`paint`。
 
 ## 7. 性能量度方法（对应 M4 验收）
 

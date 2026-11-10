@@ -27,7 +27,7 @@
 
 ## 当前状态（2026-11-08）
 
-- **M0 已完成**：Cargo 工程（lib + bin，eframe 0.37 / wgpu 后端 / CJK 字体回退）、tracing 双输出（console + `%LOCALAPPDATA%\RustPing\logs` 按天滚动）、panic hook、纯逻辑桩模块（gesture/wheel/marker/config）+ 4 个单测、GitHub Actions CI（windows-latest）。空窗口验收通过（运行稳定、wgpu 枚举到 RTX 5060 Ti）。
+- **M0 已完成**：Cargo 工程（lib + bin，eframe 0.37 / wgpu 后端 / CJK 字体回退）、完整日志系统（`src/logging.rs`：console + 按天滚动双通道、`RUSTPING_FILE_LOG` 文件级独立控制、崩溃同步落盘 `crash-*.log` 含 backtrace、14/90 天保留期清理）、纯逻辑桩模块（gesture/wheel/marker/config）+ 8 个单测、GitHub Actions CI（windows-latest）。空窗口验收通过（运行稳定、wgpu 枚举到 RTX 5060 Ti）。
 - 下一阶段：阶段 1（覆盖层窗口基础，见 ROADMAP）。动手前先确认当前实际结构，再更新本文件。
 - 常用命令：`cargo run` / `cargo test` / `cargo clippy -- -D warnings`；日志在 `%LOCALAPPDATA%\RustPing\logs`。
 - 开发顺序与阶段明细：[docs/ROADMAP.md](docs/ROADMAP.md)；开发流程与调试：[docs/DEVELOPMENT.md](docs/DEVELOPMENT.md)。
