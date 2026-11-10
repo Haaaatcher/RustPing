@@ -7,8 +7,8 @@
 
 | 项 | 选择 | 说明 |
 |---|---|---|
-| GUI/渲染 | egui + wgpu（eframe） | 纯 Rust、GPU 加速；扇形/圆环/文字用 egui 图元（Mesh/Circle/Text）足够，不手写着色器；覆盖层与设置窗口共用一套栈 |
-| 窗口 | winit（eframe 内置） | 透明、置顶、无边框；click-through 等扩展样式经 raw-window-handle 调 Win32 |
+| GUI/渲染 | egui + wgpu | 纯 Rust、GPU 加速；扇形/圆环/文字用 egui 图元（Mesh/Circle/Text）足够，不手写着色器；覆盖层与设置窗口共用一套栈 |
+| 窗口 | winit（直连） | 透明、置顶、无边框、多显示器枚举；egui-winit + egui-wgpu 手动接线。原定 eframe，阶段 1 发现其单主窗口假设与每显示器覆盖窗口冲突，已移除（2026-11-10） |
 | 平台层 | windows-rs | 低级输入钩子、窗口扩展样式、托盘、注册表 |
 | 托盘 | tray-icon | 独立 crate，成熟稳定 |
 | 配置 | serde + toml + notify | TOML 配置 + 文件变更热重载 |
